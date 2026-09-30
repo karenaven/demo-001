@@ -1,0 +1,51 @@
+{
+  "alcance": "escena",
+  "convenciones": {
+    "variables": "{{...}} se reemplaza literal por el valor guardado; la IA nunca reescribe estos valores (RN-03, RN-04).",
+    "opcionales": "[...] se omite completo si alguna variable que contiene está vacía."
+  },
+  "separadorSecciones": "\n\n",
+  "secciones": [
+    {
+      "id": "estilo",
+      "contenido": "{{estilo.texto}}"
+    },
+    {
+      "id": "locacionEIluminacionBase",
+      "lineas": [
+        "Locación: {{escena.locacion}}",
+        "Iluminación base: {{escena.iluminacion}}"
+      ]
+    },
+    {
+      "id": "personajes",
+      "titulo": "Personajes:",
+      "personajes": "presentesEnEscena",
+      "hoja": "efectiva",
+      "sinPersonajes": "omitirSeccion",
+      "porPersonaje": "{{personaje.nombre}}, {{personaje.edad}}. {{personaje.descripcionFisica}} Peinado: {{personaje.peinado}}. Vestuario: {{personaje.vestuario}}.[ Heridas/marcas: {{personaje.heridas}}.] Personalidad: {{personaje.personalidad}}. Rol: {{personaje.rol}}."
+    },
+    {
+      "id": "puestaEnEscena",
+      "titulo": "Puesta en escena:",
+      "contenido": "{{escena.puestaEnEscena}}"
+    },
+    {
+      "id": "audio",
+      "titulo": "Audio:",
+      "contenido": "{{escena.audio}}"
+    },
+    {
+      "id": "bloques",
+      "bloques": "unoPorClip",
+      "separadorBloques": "\n\n",
+      "tituloBloque": "Bloque {{bloque.numero}}:",
+      "toma": "{{toma.plano}}[, {{toma.movimiento}}][, {{toma.angulo}}], óptica {{toma.optica}}. {{toma.accion}}[ {{toma.dialogos}}] Iluminación: {{toma.iluminacion}}.",
+      "separadorTomas": " Corte a ",
+      "lineaDialogo": "{{linea.personaje}}[ ({{linea.acotacion}})]: \"{{linea.texto}}\"",
+      "separadorDialogos": " ",
+      "cierreConTextoEnPantalla": "Único texto visible en pantalla: \"{{clip.textoEnPantalla}}\"",
+      "cierreSinTextoEnPantalla": "Sin subtítulos ni texto en pantalla."
+    }
+  ]
+}

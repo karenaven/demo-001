@@ -1,0 +1,87 @@
+@page "/series/{SerieId:int}/personajes"
+@rendermode InteractiveServer
+@inject ServicioSeries ServicioSeries
+@inject ServicioPersonajes ServicioPersonajes
+
+<PageTitle>Personajes · RodajeIA</PageTitle>
+
+<p><a href="series">← Series</a></p>
+
+@if (cargando)
+{
+    <p class="vacio">Cargando…</p>
+}
+else if (serie is null)
+{
+    <h1>Serie no encontrada</h1>
+}
+else
+{
+    <div class="encabezado">
+        <h1>Personajes de @serie.Nombre</h1>
+        <div class="fila">
+            <a class="boton secundario" href="generar?serie=@SerieId">Generar prompts</a>
+            <a class="boton" href="series/@SerieId/personajes/nuevo">Nuevo personaje</a>
+        </div>
+    </div>
+
+    @if (personajes.Count == 0)
+    {
+        <p class="vacio">Esta serie todavía no tiene hojas de personaje.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr><th>Nombre</th><th>Edad</th><th>Rol</th><th>Vestuario</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var personaje in personajes)
+                {
+                    <tr>
+                        <td>@personaje.Nombre</td>
+                        <td>@personaje.Edad</td>
+                        <td>@personaje.Rol</td>
+                        <td>@personaje.Vestuario</td>
+                        <td class="acciones">
+                            @if (confirmandoEliminar == personaje.Id)
+                            {
+                                <span>¿Eliminar a @personaje.Nombre?</span>
+                                <button class="peligro" @onclick="() => EliminarAsync(personaje.Id)">Sí, eliminar</button>
+                                <button class="secundario" @onclick="() => confirmandoEliminar = null">Cancelar</button>
+                            }
+                            else
+                            {
+                                <a href="personajes/@personaje.Id/editar">Editar</a>
+                                <button class="secundario" @onclick="() => confirmandoEliminar = personaje.Id">Eliminar</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter] public int SerieId { get; set; }
+
+    private bool cargando = true;
+    private Serie? serie;
+    private IReadOnlyList<Personaje> personajes = [];
+    private int? confirmandoEliminar;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        serie = await ServicioSeries.ObtenerAsync(SerieId);
+        personajes = serie is null ? [] : await ServicioPersonajes.ListarAsync(SerieId);
+        cargando = false;
+    }
+
+    private async Task EliminarAsync(int id)
+    {
+        await ServicioPersonajes.EliminarAsync(id);
+        confirmandoEliminar = null;
+        personajes = await ServicioPersonajes.ListarAsync(SerieId);
+    }
+}

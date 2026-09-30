@@ -1,22 +1,42 @@
-ESCENA 1 — RESTAURANTE — NOCHE
+ESCENA 1 — INT. RESTAURANTE — NOCHE
+LOCACIÓN: Restaurante pequeño y acogedor; pared de ladrillo visto, mesas de madera oscura, vela en portavelas de cristal, ventana a la calle con luces de ciudad desenfocadas.
+ILUMINACIÓN: Luz cálida ambiental (aprox. 2700 K), principal suave cenital de la lámpara sobre la mesa, reflejo de la vela en los rostros.
+PUESTA EN ESCENA: Sentados frente a frente en una mesa para dos junto a la ventana. Ana siempre a la IZQUIERDA del encuadre, José Daniel siempre a la DERECHA.
+AUDIO: Ambiente tranquilo de restaurante, murmullo lejano y cubiertos; SIN música. Diálogo en español, acento latinoamericano neutro.
+CLIP 1
 Ana y José Daniel conversan en una mesa junto a la ventana. José Daniel sonríe pícaramente.
-ANA: *IP* Mentiroso. *FP*
-JOSÉ DANIEL (sonriendo): *IP* Bueno... (pausa) pasó parecido. *FP*
+ANA: "Mentiroso."
+CLIP 2
+JOSÉ DANIEL (sonriendo): "Bueno... (pausa) pasó parecido."
 Ana niega con la cabeza, divertida, con una sonrisa amplia.
+CLIP 3
 Un mesero deja dos platos sobre la mesa. Ana y José Daniel agradecen con gestos breves y siguen conversando.
 
-ESCENA 2 - RESTAURANTE - NOCHE
+ESCENA 2 — INT. RESTAURANTE — NOCHE
+LOCACIÓN: Mismo restaurante; los platos servidos sobre la mesa, el celular de José Daniel boca arriba junto a su plato.
+ILUMINACIÓN: Misma luz cálida ambiental (aprox. 2700 K) de la escena 1; la pantalla del celular agrega un toque frío sobre el rostro de José Daniel cuando la mira.
+PUESTA EN ESCENA: Siguen sentados frente a frente. Ana a la IZQUIERDA del encuadre, José Daniel a la DERECHA. José Daniel pasa de relajado a tenso; Ana se inclina levemente hacia él.
+AUDIO: Ambiente tranquilo de restaurante, murmullo lejano y cubiertos; vibración del celular sobre la madera; SIN música. Diálogo en español, acento latinoamericano neutro.
+CLIP 1
 El celular de José Daniel vibra sobre la mesa. Lo mira distraído y su expresión pasa de alegre a preocupada.
-ANA (con mirada de preocupación leve): *IP* ¿Qué pasó? *FP*
-José Daniel toma el celular. En la pantalla se lee: "Hermano, ¿puedes salir conmigo a tomar algo? Estoy muy mal. Terminamos. Me enteré de que me estaba siendo infiel."
+ANA (con mirada de preocupación leve): "¿Qué pasó?"
+CLIP 2
+José Daniel toma el celular y lee el mensaje.
+TEXTO EN PANTALLA: "Hermano, ¿puedes salir conmigo a tomar algo? Estoy muy mal. Terminamos. Me enteré de que me estaba siendo infiel."
+CLIP 3
 José Daniel escribe en el celular, con el ceño fruncido.
-JOSÉ DANIEL (voz en off mientras escribe): *IP* Le digo que estoy contigo,
-pero que en una hora paso por él. *FP*
-ANA: *IP* Claro. *FP*
+JOSÉ DANIEL (voz en off mientras escribe): "Le digo que estoy contigo, pero que en una hora paso por él."
+ANA: "Claro."
 
-ESCENA 3 — RESTAURANTE — NOCHE
+ESCENA 3 — INT. RESTAURANTE — NOCHE
+LOCACIÓN: Mismo restaurante; platos a medio comer, el celular de José Daniel de nuevo sobre la mesa.
+ILUMINACIÓN: Misma luz cálida ambiental (aprox. 2700 K), principal suave cenital de la lámpara sobre la mesa, reflejo de la vela en los rostros.
+PUESTA EN ESCENA: Sentados frente a frente. Ana a la IZQUIERDA del encuadre, José Daniel a la DERECHA. Tono más íntimo y serio que en la escena 1.
+AUDIO: Ambiente tranquilo de restaurante, murmullo lejano y cubiertos; SIN música. Diálogo en español, acento latinoamericano neutro.
+CLIP 1
 José Daniel deja el celular sobre la mesa.
-JOSÉ DANIEL: *IP* Terminó con la novia. Al parecer llevaba tiempo sospechando que algo pasaba y hoy descubrió que le era infiel. *FP*
+JOSÉ DANIEL: "Terminó con la novia. Al parecer llevaba tiempo sospechando que algo pasaba y hoy descubrió que le era infiel."
+CLIP 2
 Ana baja levemente la mirada, con expresión empática.
-ANA: *IP* Qué horrible. *FP*
-JOSÉ DANIEL: *IP* Sí. Está destruido. *FP*
+ANA: "Qué horrible."
+JOSÉ DANIEL: "Sí. Está destruido."

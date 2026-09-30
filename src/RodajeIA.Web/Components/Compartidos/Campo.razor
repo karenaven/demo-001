@@ -1,0 +1,36 @@
+@* Campo de formulario con su etiqueta y su mensaje de error. *@
+<div class="campo">
+    <label for="@Id">@Etiqueta @if (Opcional) {<span class="opcional">(opcional)</span>}</label>
+    @if (Multilinea)
+    {
+        <textarea id="@Id" rows="3" value="@Valor" @oninput="Cambiar"
+                  aria-invalid="@(Error is null ? null : "true")"></textarea>
+    }
+    else
+    {
+        <input id="@Id" value="@Valor" @oninput="Cambiar"
+               aria-invalid="@(Error is null ? null : "true")" />
+    }
+    @if (Error is not null)
+    {
+        <p class="error">@Error</p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Id { get; set; } = "";
+
+    [Parameter, EditorRequired] public string Etiqueta { get; set; } = "";
+
+    [Parameter] public string Valor { get; set; } = "";
+
+    [Parameter] public EventCallback<string> ValorChanged { get; set; }
+
+    [Parameter] public string? Error { get; set; }
+
+    [Parameter] public bool Multilinea { get; set; }
+
+    [Parameter] public bool Opcional { get; set; }
+
+    private Task Cambiar(ChangeEventArgs e) => ValorChanged.InvokeAsync(e.Value?.ToString() ?? "");
+}

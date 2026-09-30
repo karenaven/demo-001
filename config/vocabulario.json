@@ -1,0 +1,61 @@
+{
+  "version": "0.1",
+  "descripcion": "Vocabulario técnico cerrado (RN-02). El schema de salida estructurada de Gemini se genera desde este archivo: cada categoría es un enum con estos valores.",
+  "categorias": {
+    "plano": {
+      "obligatorio": true,
+      "valores": [
+        "gran plano general",
+        "plano general",
+        "plano medio general",
+        "plano medio",
+        "plano medio-corto",
+        "primer plano",
+        "primerísimo primer plano",
+        "plano detalle"
+      ]
+    },
+    "optica": {
+      "obligatorio": true,
+      "valores": [
+        "gran angular 24mm",
+        "35mm",
+        "50mm",
+        "85mm",
+        "macro 100mm"
+      ]
+    },
+    "iluminacion": {
+      "obligatorio": true,
+      "descripcion": "Variación sobre la iluminación base de la escena.",
+      "valores": [
+        "continuidad con la luz base",
+        "fuente práctica cálida (vela o lámpara)",
+        "fuente práctica fría (pantalla)",
+        "contraluz o luz de borde",
+        "clave baja con sombra dramática",
+        "luz suave de relleno"
+      ]
+    },
+    "angulo": {
+      "obligatorio": false,
+      "valores": [
+        "a la altura de los ojos",
+        "picado",
+        "contrapicado",
+        "cenital",
+        "por encima del hombro"
+      ]
+    },
+    "movimiento": {
+      "obligatorio": false,
+      "valores": [
+        "toma estática",
+        "paneo",
+        "travelling de acercamiento",
+        "travelling lateral",
+        "cámara en mano"
+      ]
+    }
+  }
+}

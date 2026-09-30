@@ -1,0 +1,101 @@
+@page "/series/{SerieId:int}/personajes/nuevo"
+@page "/personajes/{Id:int}/editar"
+@rendermode InteractiveServer
+@inject ServicioSeries ServicioSeries
+@inject ServicioPersonajes ServicioPersonajes
+@inject NavigationManager Navegacion
+
+<PageTitle>@(Id is null ? "Nuevo personaje" : "Editar personaje") · RodajeIA</PageTitle>
+
+@if (cargando)
+{
+    <p class="vacio">Cargando…</p>
+}
+else if (serie is null)
+{
+    <p><a href="series">← Series</a></p>
+    <h1>@(Id is null ? "Serie no encontrada" : "Personaje no encontrado")</h1>
+}
+else
+{
+    <p><a href="series/@serie.Id/personajes">← Personajes de @serie.Nombre</a></p>
+    <h1>@(Id is null ? "Nuevo personaje" : $"Editar a {nombreOriginal}")</h1>
+
+    <form class="formulario" @onsubmit="GuardarAsync">
+        <p class="ayuda">
+            El nombre se busca en el guion tal cual en la acción (<em>Ana</em>) y en mayúsculas en el diálogo (<em>ANA:</em>).
+            Lo que escribas acá se inserta literal en cada prompt donde aparezca el personaje.
+        </p>
+
+        <Campo Id="nombre" Etiqueta="Nombre" @bind-Valor="datos.Nombre" Error="@ErrorDe(nameof(DatosPersonaje.Nombre))" />
+        <Campo Id="edad" Etiqueta="Edad" @bind-Valor="datos.Edad" Error="@ErrorDe(nameof(DatosPersonaje.Edad))" />
+        <Campo Id="descripcion" Etiqueta="Descripción física (incluye voz)" Multilinea
+               @bind-Valor="datos.DescripcionFisica" Error="@ErrorDe(nameof(DatosPersonaje.DescripcionFisica))" />
+        <Campo Id="peinado" Etiqueta="Peinado" @bind-Valor="datos.Peinado" Error="@ErrorDe(nameof(DatosPersonaje.Peinado))" />
+        <Campo Id="vestuario" Etiqueta="Vestuario" @bind-Valor="datos.Vestuario" Error="@ErrorDe(nameof(DatosPersonaje.Vestuario))" />
+        <Campo Id="heridas" Etiqueta="Heridas/marcas" Opcional @bind-Valor="datos.Heridas" />
+        <Campo Id="personalidad" Etiqueta="Personalidad" Multilinea
+               @bind-Valor="datos.Personalidad" Error="@ErrorDe(nameof(DatosPersonaje.Personalidad))" />
+        <Campo Id="rol" Etiqueta="Rol" @bind-Valor="datos.Rol" Error="@ErrorDe(nameof(DatosPersonaje.Rol))" />
+
+        @if (ErrorDe(ResultadoGuardado.General) is { } general)
+        {
+            <p class="error">@general</p>
+        }
+
+        <div class="fila">
+            <button type="submit" disabled="@guardando">@(guardando ? "Guardando…" : "Guardar")</button>
+            <a class="boton secundario" href="series/@serie.Id/personajes">Cancelar</a>
+        </div>
+    </form>
+}
+
+@code {
+    [Parameter] public int? SerieId { get; set; }
+
+    [Parameter] public int? Id { get; set; }
+
+    private bool cargando = true;
+    private bool guardando;
+    private Serie? serie;
+    private string nombreOriginal = "";
+    private DatosPersonaje datos = new();
+    private IReadOnlyDictionary<string, string> errores = new Dictionary<string, string>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is { } id)
+        {
+            var personaje = await ServicioPersonajes.ObtenerAsync(id);
+            if (personaje is not null)
+            {
+                serie = await ServicioSeries.ObtenerAsync(personaje.SerieId);
+                datos = DatosPersonaje.Desde(personaje);
+                nombreOriginal = personaje.Nombre;
+            }
+        }
+        else if (SerieId is { } serieId)
+        {
+            serie = await ServicioSeries.ObtenerAsync(serieId);
+        }
+
+        cargando = false;
+    }
+
+    private string? ErrorDe(string campo) => errores.GetValueOrDefault(campo);
+
+    private async Task GuardarAsync()
+    {
+        guardando = true;
+        var resultado = Id is { } id
+            ? await ServicioPersonajes.EditarAsync(id, datos)
+            : await ServicioPersonajes.CrearAsync(serie!.Id, datos);
+        guardando = false;
+
+        errores = resultado.Errores;
+        if (resultado.Exito)
+        {
+            Navegacion.NavigateTo($"series/{serie!.Id}/personajes");
+        }
+    }
+}

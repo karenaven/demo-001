@@ -1,0 +1,208 @@
+@page "/generar"
+@rendermode InteractiveServer
+@implements IDisposable
+@using RodajeIA.Web.Dominio
+@using RodajeIA.Web.Generacion
+@using RodajeIA.Web.Guion
+@inject ServicioSeries ServicioSeries
+@inject ServicioPersonajes ServicioPersonajes
+@inject SesionGeneracion Sesion
+@inject IJSRuntime JS
+
+<PageTitle>Generar prompts · RodajeIA</PageTitle>
+
+<h1>Generar prompts</h1>
+
+@if (series is null)
+{
+    <p class="vacio">Cargando…</p>
+}
+else if (series.Count == 0)
+{
+    <p class="vacio">Primero <a href="series">creá una serie</a> y cargá sus personajes.</p>
+}
+else
+{
+    <form class="formulario ancho" @onsubmit="ProcesarAsync">
+        <div class="campo">
+            <label for="serie">Serie</label>
+            <select id="serie" value="@serieId" @onchange="CambiarSerieAsync">
+                <option value="">Elegí una serie…</option>
+                @foreach (var serie in series)
+                {
+                    <option value="@serie.Id">@serie.Nombre</option>
+                }
+            </select>
+            @if (serieId is not null)
+            {
+                <p class="ayuda">
+                    @if (hojas.Count == 0)
+                    {
+                        <text>Esta serie no tiene personajes con hoja: los prompts no van a incluir la sección Personajes.</text>
+                    }
+                    else
+                    {
+                        <text>Personajes con hoja: @string.Join(", ", hojas.Select(h => h.Nombre)).</text>
+                    }
+                    <a href="series/@serieId/personajes">Editar personajes</a>
+                </p>
+            }
+        </div>
+
+        <div class="campo">
+            <label for="guion">Guion</label>
+            <textarea id="guion" class="guion" rows="14" @bind="guion" @bind:event="oninput"
+                      placeholder="ESCENA 1 — INT. LUGAR — MOMENTO DEL DÍA"></textarea>
+        </div>
+
+        @if (errorFormulario is not null)
+        {
+            <p class="error">@errorFormulario</p>
+        }
+
+        <div class="fila">
+            <button type="submit">Validar y generar</button>
+        </div>
+    </form>
+
+    @if (errores.Count > 0)
+    {
+        <section class="errores-guion" aria-live="polite">
+            <h2>El guion tiene @errores.Count @(errores.Count == 1 ? "error" : "errores") y no se procesó</h2>
+            <p class="ayuda">Devolvéselo al guionista con esta lista. No se generó ni guardó nada.</p>
+            <ul>
+                @foreach (var error in errores)
+                {
+                    <li><strong>Línea @error.Linea:</strong> @error.Motivo</li>
+                }
+            </ul>
+        </section>
+    }
+
+    @if (Sesion.Escenas.Count > 0)
+    {
+        <section aria-live="polite">
+            <h2>Escenas</h2>
+            @foreach (var item in Sesion.Escenas)
+            {
+                var escena = item.Escena;
+                <article class="escena">
+                    <header class="encabezado">
+                        <h3>Escena @escena.Numero — @(escena.Tipo == TipoLocacion.Int ? "INT." : "EXT.") @escena.Lugar — @escena.MomentoDelDia</h3>
+                        <span class="estado estado-@item.Estado.ToString().ToLowerInvariant()">@TextoEstado(item)</span>
+                    </header>
+                    <p class="ayuda">
+                        @escena.Clips.Count @(escena.Clips.Count == 1 ? "clip" : "clips") ·
+                        @(item.Personajes.EnEscena.Count == 0
+                            ? "sin personajes con hoja"
+                            : string.Join(", ", item.Personajes.EnEscena.Select(p => p.Nombre)))
+                    </p>
+
+                    @if (item.Estado == EstadoGeneracion.Lista)
+                    {
+                        <div class="fila">
+                            <button type="button" @onclick="() => CopiarAsync(item)">Copiar prompt</button>
+                            @if (copiada == item)
+                            {
+                                <span class="ayuda" role="status">@mensajeCopia</span>
+                            }
+                        </div>
+                        <pre class="prompt">@item.Prompt</pre>
+                    }
+                    else if (item.Estado == EstadoGeneracion.Error)
+                    {
+                        <ul class="fallos">
+                            @foreach (var fallo in item.Fallos)
+                            {
+                                <li>@fallo</li>
+                            }
+                        </ul>
+                        <button type="button" @onclick="() => Sesion.ReintentarAsync(item)">Reintentar</button>
+                    }
+                </article>
+            }
+        </section>
+    }
+}
+
+@code {
+    [SupplyParameterFromQuery(Name = "serie")] public int? SerieQuery { get; set; }
+
+    private IReadOnlyList<Serie>? series;
+    private int? serieId;
+    private IReadOnlyList<HojaPersonaje> hojas = [];
+    private string guion = "";
+    private string? errorFormulario;
+    private IReadOnlyList<ErrorGuion> errores = [];
+    private EscenaEnSesion? copiada;
+    private string mensajeCopia = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Sesion.Cambio += AlCambiar;
+        series = await ServicioSeries.ListarAsync();
+        if (SerieQuery is { } id && series.Any(s => s.Id == id))
+        {
+            await ElegirSerieAsync(id);
+        }
+    }
+
+    public void Dispose() => Sesion.Cambio -= AlCambiar;
+
+    private void AlCambiar() => _ = InvokeAsync(StateHasChanged);
+
+    private Task CambiarSerieAsync(ChangeEventArgs e) =>
+        ElegirSerieAsync(int.TryParse(e.Value?.ToString(), out var id) ? id : null);
+
+    private async Task ElegirSerieAsync(int? id)
+    {
+        serieId = id;
+        hojas = id is null ? [] : (await ServicioPersonajes.ListarAsync(id.Value)).Select(p => p.AHoja()).ToList();
+    }
+
+    private async Task ProcesarAsync()
+    {
+        errorFormulario = null;
+        errores = [];
+        if (serieId is null)
+        {
+            errorFormulario = "Elegí una serie antes de cargar el guion.";
+            return;
+        }
+
+        // Las hojas se leen de nuevo por si se editaron en otra pestaña.
+        await ElegirSerieAsync(serieId);
+        var resultado = Sesion.Cargar(guion, hojas);
+        if (!resultado.EsValido)
+        {
+            errores = resultado.Errores;
+            return;
+        }
+
+        // La generación arranca sola (RF-06c) y la página se actualiza con cada cambio de la sesión.
+        _ = Sesion.GenerarPendientesAsync();
+    }
+
+    private async Task CopiarAsync(EscenaEnSesion item)
+    {
+        copiada = item;
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", item.Prompt);
+            mensajeCopia = "Copiado.";
+        }
+        catch (JSException)
+        {
+            mensajeCopia = "No se pudo copiar: seleccioná el texto y copialo a mano.";
+        }
+    }
+
+    private static string TextoEstado(EscenaEnSesion item) => item.Estado switch
+    {
+        EstadoGeneracion.Pendiente => "En espera",
+        EstadoGeneracion.Generando when item.Intento > 1 => $"Generando · intento {item.Intento} de {GeneradorEscena.MaxIntentos}",
+        EstadoGeneracion.Generando => "Generando…",
+        EstadoGeneracion.Lista => "Lista",
+        _ => "Error",
+    };
+}
