@@ -1,0 +1,1 @@
+Seguir todas las instrucciones de @AGENTS.md
